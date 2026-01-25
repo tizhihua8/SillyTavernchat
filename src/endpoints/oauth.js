@@ -22,6 +22,8 @@ import { checkForNewContent, CONTENT_TYPES } from './content-manager.js';
 import { applyDefaultTemplateToUser } from '../default-template.js';
 
 export const router = express.Router();
+const USER_STORAGE_ENABLED = getConfigValue('userStorage.enabled', false, 'boolean');
+const USER_STORAGE_DEFAULT_LIMIT_MIB = getConfigValue('userStorage.defaultLimitMiB', 0, 'number');
 
 /**
  * 处理 Discourse avatar template
@@ -808,6 +810,11 @@ router.post('/verify-invitation', async (request, response) => {
             avatar: pendingUser.avatar || null,
         };
 
+        if (USER_STORAGE_ENABLED) {
+            const limitMiB = Number(USER_STORAGE_DEFAULT_LIMIT_MIB) || 0;
+            user.storageLimitMiB = Math.max(0, limitMiB);
+        }
+
         // 如果邀请码有用户过期时间，设置用户过期时间
         let userExpiresAt = null;
         if (validation.invitation && validation.invitation.durationDays) {
@@ -858,4 +865,3 @@ router.post('/verify-invitation', async (request, response) => {
         return response.status(500).json({ error: '邀请码验证失败' });
     }
 });
-
