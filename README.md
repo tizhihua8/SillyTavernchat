@@ -53,8 +53,6 @@
 
 ## 演示地址
 
-**https://st.zkjd.me**
-
 
 **https://ai.cao.baby**
 
