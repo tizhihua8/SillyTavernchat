@@ -14,6 +14,7 @@ import systemMonitor from '../system-monitor.js';
 import {
     getConfigValue,
     humanizedISO8601DateTime,
+    humanizedDateTime,
     tryParse,
     generateTimestamp,
     removeOldBackups,
@@ -495,6 +496,11 @@ function getChatTotalBytes(filePath) {
 function ensureChatChunkDir(filePath) {
     const dir = getChatChunkDir(filePath);
     if (!fs.existsSync(dir)) {
+        // Ensure parent directory exists first
+        const parentDir = path.dirname(filePath);
+        if (!fs.existsSync(parentDir)) {
+            fs.mkdirSync(parentDir, { recursive: true });
+        }
         fs.mkdirSync(dir, { recursive: true });
     }
     return dir;
@@ -1911,7 +1917,7 @@ router.post('/group/import', async function (request, response) {
             return response.sendStatus(400);
         }
 
-        const chatname = humanizedISO8601DateTime();
+        const chatname = humanizedDateTime();
         const pathToUpload = path.join(filedata.destination, filedata.filename);
         const uploadSize = fs.statSync(pathToUpload).size;
         const storageError = await ensureChatStorageCapacity(request, response, uploadSize);
@@ -1980,7 +1986,7 @@ router.post('/import', validateAvatarUrlMiddleware, async function (request, res
             }
 
             const handleChat = async (chat) => {
-                const fileName = `${characterName} - ${humanizedISO8601DateTime()} imported.jsonl`;
+                const fileName = `${characterName} - ${humanizedDateTime()} imported.jsonl`;
                 const chatDir = path.join(request.user.directories.chats, avatarUrl);
                 // Ensure chat directory exists
                 if (!fs.existsSync(chatDir)) {
@@ -2037,7 +2043,7 @@ router.post('/import', validateAvatarUrlMiddleware, async function (request, res
                 console.warn('Failed to flatten Chub Chat data: ', error);
             }
 
-            const fileName = `${characterName} - ${humanizedISO8601DateTime()} imported.jsonl`;
+            const fileName = `${characterName} - ${humanizedDateTime()} imported.jsonl`;
             const chatDir = path.join(request.user.directories.chats, avatarUrl);
             // Ensure chat directory exists
             if (!fs.existsSync(chatDir)) {
