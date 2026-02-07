@@ -1981,7 +1981,12 @@ router.post('/import', validateAvatarUrlMiddleware, async function (request, res
 
             const handleChat = async (chat) => {
                 const fileName = `${characterName} - ${humanizedISO8601DateTime()} imported.jsonl`;
-                const filePath = path.join(request.user.directories.chats, avatarUrl, fileName);
+                const chatDir = path.join(request.user.directories.chats, avatarUrl);
+                // Ensure chat directory exists
+                if (!fs.existsSync(chatDir)) {
+                    fs.mkdirSync(chatDir, { recursive: true });
+                }
+                const filePath = path.join(chatDir, fileName);
                 fileNames.push(fileName);
                 if (chatChunkingEnabled) {
                     const lines = String(chat).split('\n').filter(line => line.length > 0);
@@ -2033,7 +2038,12 @@ router.post('/import', validateAvatarUrlMiddleware, async function (request, res
             }
 
             const fileName = `${characterName} - ${humanizedISO8601DateTime()} imported.jsonl`;
-            const filePath = path.join(request.user.directories.chats, avatarUrl, fileName);
+            const chatDir = path.join(request.user.directories.chats, avatarUrl);
+            // Ensure chat directory exists
+            if (!fs.existsSync(chatDir)) {
+                fs.mkdirSync(chatDir, { recursive: true });
+            }
+            const filePath = path.join(chatDir, fileName);
             fileNames.push(fileName);
             if (chatChunkingEnabled) {
                 const lines = String(flattenedChat ?? '').split('\n').filter(line => line.length > 0);
