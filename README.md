@@ -36,7 +36,7 @@
 
 ```bash
 # 1. 克隆本项目并直接切换到 stc-mod 分支
-git clone -b stc-mod [https://github.com/zhaiiker/SillyTavernMOD.git](https://github.com/zhaiiker/SillyTavernMOD.git)
+git clone -b stc-mod https://github.com/zhaiiker/SillyTavernMOD.git
 
 # 2. 进入项目目录
 cd SillyTavernMOD
@@ -46,6 +46,8 @@ npm install
 
 # 4. 启动服务
 node server.js
+
+```
 
 # SillyTavernchat v1.15.0
 
